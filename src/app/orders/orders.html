@@ -1,0 +1,151 @@
+<div class="orders-page">
+  <header class="page-header">
+    <div class="header-text-group">
+      <h1 class="page-title">My Orders</h1>
+      <p class="page-subtitle">
+        Track your booked orders, delivery status, shipping addresses, and order history.
+      </p>
+    </div>
+    @if (orders.length > 0) {
+      <button type="button" class="btn btn-outline btn-sm" (click)="clearAllOrders()">
+        Clear History
+      </button>
+    }
+  </header>
+
+  @if (orders.length === 0) {
+    <!-- Empty Orders State -->
+    <div class="empty-orders-view">
+      <div class="empty-icon-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+      </div>
+      <h2 class="empty-title">No orders placed yet</h2>
+      <p class="empty-desc">
+        You haven't booked any electronics yet. Browse our catalogue of laptops, smartphones, and accessories!
+      </p>
+      <a routerLink="/products" class="btn btn-primary btn-lg" id="orders-browse-btn">
+        Start Shopping
+      </a>
+    </div>
+  } @else {
+    <!-- Orders List -->
+    <div class="orders-list">
+      @for (order of orders; track order.orderId) {
+        <article class="order-card" [id]="'order-card-' + order.orderId">
+          <!-- Card Header Bar -->
+          <div class="order-card-header">
+            <div class="order-main-meta">
+              <div class="order-title-group">
+                <span class="order-hash">Order</span>
+                <h2 class="order-number">#{{ order.orderId }}</h2>
+              </div>
+              <span class="order-date">Placed on {{ order.orderDate | date:'mediumDate' }}</span>
+            </div>
+
+            <div class="order-header-right">
+              <span
+                class="status-pill"
+                [class.status-confirmed]="order.status === 'Confirmed'"
+                [class.status-shipped]="order.status === 'Shipped'"
+                [class.status-delivered]="order.status === 'Delivered'"
+              >
+                ● {{ order.status }}
+              </span>
+              <span class="order-total-price">₹{{ order.total.toLocaleString('en-IN') }}</span>
+            </div>
+          </div>
+
+          <!-- Order Status Tracker Bar -->
+          <div class="order-status-tracker">
+            <div class="tracker-step active">
+              <div class="tracker-dot">✓</div>
+              <span>Ordered</span>
+            </div>
+            <div class="tracker-line filled"></div>
+            <div class="tracker-step active">
+              <div class="tracker-dot">✓</div>
+              <span>Confirmed</span>
+            </div>
+            <div class="tracker-line" [class.filled]="order.status === 'Shipped' || order.status === 'Delivered'"></div>
+            <div class="tracker-step" [class.active]="order.status === 'Shipped' || order.status === 'Delivered'">
+              <div class="tracker-dot">
+                @if (order.status === 'Shipped' || order.status === 'Delivered') { ✓ } @else { 3 }
+              </div>
+              <span>Shipped</span>
+            </div>
+            <div class="tracker-line" [class.filled]="order.status === 'Delivered'"></div>
+            <div class="tracker-step" [class.active]="order.status === 'Delivered'">
+              <div class="tracker-dot">
+                @if (order.status === 'Delivered') { ✓ } @else { 4 }
+              </div>
+              <span>Delivered</span>
+            </div>
+          </div>
+
+          <!-- Order Items -->
+          <div class="order-items-wrapper">
+            <h3 class="items-heading">Items ({{ order.items.length }})</h3>
+            <div class="order-items-grid">
+              @for (item of order.items; track item.product.id) {
+                <div class="order-item-chip">
+                  <img [src]="item.product.imageUrl" [alt]="item.product.name" class="item-thumb" />
+                  <div class="item-info">
+                    <span class="item-name">{{ item.product.name }}</span>
+                    <span class="item-meta">{{ item.product.category }} · Qty: {{ item.quantity }}</span>
+                  </div>
+                  <span class="item-price">₹{{ (item.product.price * item.quantity).toLocaleString('en-IN') }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Order Footer Info Grid -->
+          <div class="order-card-footer">
+            <div class="footer-info-col">
+              <span class="col-heading">Delivery Address</span>
+              <span class="col-content">
+                <strong>{{ order.shippingAddress.fullName }}</strong><br />
+                {{ order.shippingAddress.street }}, {{ order.shippingAddress.city }}<br />
+                {{ order.shippingAddress.state }} - {{ order.shippingAddress.pincode }}<br />
+                Ph: {{ order.shippingAddress.phone }}
+              </span>
+            </div>
+
+            <div class="footer-info-col">
+              <span class="col-heading">Payment &amp; Delivery</span>
+              <span class="col-content">
+                <strong>Payment:</strong> {{ order.paymentMethod }}<br />
+                <strong>Est. Delivery:</strong> {{ order.estimatedDelivery }}<br />
+                <strong>Shipping:</strong>
+                @if (order.shipping === 0) {
+                  <span class="text-free">FREE</span>
+                } @else {
+                  ₹{{ order.shipping }}
+                }
+              </span>
+            </div>
+
+            <div class="footer-actions-col">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm"
+                (click)="buyAgain(order)"
+                [id]="'buy-again-btn-' + order.orderId"
+              >
+                <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                </svg>
+                Buy Again
+              </button>
+              <a routerLink="/products" class="btn btn-outline btn-sm">
+                Shop More
+              </a>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</div>

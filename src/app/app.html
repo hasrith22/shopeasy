@@ -31,6 +31,14 @@
         >
           Products
         </a>
+        <a
+          routerLink="/orders"
+          routerLinkActive="active"
+          class="nav-link"
+          id="nav-orders-link"
+        >
+          My Orders
+        </a>
 
         @if (!authService.isLoggedIn()) {
           <a
@@ -125,6 +133,14 @@
           (click)="closeMobileMenu()"
         >
           Products
+        </a>
+        <a
+          routerLink="/orders"
+          routerLinkActive="active"
+          class="mobile-nav-link"
+          (click)="closeMobileMenu()"
+        >
+          My Orders
         </a>
 
         @if (!authService.isLoggedIn()) {
@@ -365,6 +381,7 @@
           <ul class="footer-links">
             <li><a routerLink="/">Home</a></li>
             <li><a routerLink="/products">All Products</a></li>
+            <li><a routerLink="/orders">My Orders</a></li>
             <li><a routerLink="/login">Sign In</a></li>
             <li><a routerLink="/register">Register Account</a></li>
           </ul>

@@ -4,6 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { CartService, CartItem } from '../cart.service';
 import { AuthService } from '../auth.service';
+import { OrderService, Order } from '../order.service';
 
 export interface OrderDetails {
   orderId: string;
@@ -33,6 +34,7 @@ export interface OrderDetails {
 export class CheckoutComponent {
   readonly cartService = inject(CartService);
   readonly authService = inject(AuthService);
+  readonly orderService = inject(OrderService);
   private readonly router = inject(Router);
 
   // Checkout Steps: 1 = Address, 2 = Payment, 3 = Order Placed Success
@@ -113,6 +115,21 @@ export class CheckoutComponent {
       this.placedOrder.set(snapshot);
       this.isProcessingPayment.set(false);
       this.currentStep.set(3);
+
+      // Save to booked orders history
+      const savedOrderRecord: Order = {
+        orderId: snapshot.orderId,
+        orderDate: snapshot.orderDate.toISOString(),
+        items: snapshot.items,
+        subtotal: snapshot.subtotal,
+        shipping: snapshot.shipping,
+        total: snapshot.total,
+        shippingAddress: snapshot.shippingAddress,
+        paymentMethod: snapshot.paymentMethod,
+        status: 'Confirmed',
+        estimatedDelivery: this.estimatedDeliveryDate,
+      };
+      this.orderService.addOrder(savedOrderRecord);
 
       // Clear cart now that the order is confirmed
       this.cartService.clearCart();

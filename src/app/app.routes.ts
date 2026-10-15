@@ -4,6 +4,7 @@ import { ProductsComponent } from './products/products';
 import { RegisterComponent } from './register/register';
 import { LoginComponent } from './login/login';
 import { CheckoutComponent } from './checkout/checkout';
+import { OrdersComponent } from './orders/orders';
 
 export const routes: Routes = [
   {
@@ -15,6 +16,11 @@ export const routes: Routes = [
     path: 'products',
     component: ProductsComponent,
     title: 'Products Catalogue | ShopEasy',
+  },
+  {
+    path: 'orders',
+    component: OrdersComponent,
+    title: 'My Orders | ShopEasy',
   },
   {
     path: 'checkout',
