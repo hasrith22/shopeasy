@@ -1,0 +1,205 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-tag">
+        <span class="tag-pulse"></span>
+        Curated Modern Electronics
+      </div>
+      <h1 class="hero-title">
+        Find Your Everyday <span class="text-accent">Essentials.</span>
+      </h1>
+      <p class="hero-description">
+        ShopEasy brings you premium laptops, smartphones, and audio gear built for performance and durability. Elevate your everyday workspace with quality electronics at honest prices.
+      </p>
+      <div class="hero-actions">
+        <a routerLink="/products" class="btn btn-primary btn-lg" id="hero-shop-now-btn">
+          Shop Now
+          <svg class="icon-arrow" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+        <a routerLink="/register" class="btn btn-secondary btn-lg" id="hero-register-btn">
+          Join ShopEasy
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-number">10k+</span>
+          <span class="stat-label">Happy Shoppers</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">100%</span>
+          <span class="stat-label">Genuine Products</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">4.8★</span>
+          <span class="stat-label">Average Rating</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-card-composition">
+        <div class="hero-main-card">
+          <div class="hero-badge">Featured Pick</div>
+          <img
+            src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=80"
+            alt="Pro Ultra Laptop"
+            class="hero-img"
+            (error)="handleImageError($event)"
+          />
+          <div class="hero-card-info">
+            <div class="hero-card-meta">
+              <span class="hero-card-name">Pro Ultra Laptop</span>
+              <span class="hero-card-price">₹54,999</span>
+            </div>
+            <p class="hero-card-sub">16GB RAM · 512GB SSD · Intel Core i7</p>
+          </div>
+        </div>
+
+        <div class="floating-pill floating-pill-top">
+          <span class="pill-icon">⚡</span>
+          <div class="pill-text">
+            <strong>Fast Dispatch</strong>
+            <small>Dispatched within 24 hours</small>
+          </div>
+        </div>
+
+        <div class="floating-pill floating-pill-bottom">
+          <span class="pill-icon">🛡️</span>
+          <div class="pill-text">
+            <strong>2-Year Warranty</strong>
+            <small>Official brand coverage</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="benefits-section">
+    <div class="section-header">
+      <span class="section-subtitle">Why Shop With Us</span>
+      <h2 class="section-title">Built for peace of mind</h2>
+    </div>
+
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-icon-wrapper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+          </svg>
+        </div>
+        <h3 class="benefit-title">Verified Quality</h3>
+        <p class="benefit-desc">
+          Every device is rigorously tested and sourced directly from certified manufacturers for optimal performance.
+        </p>
+      </div>
+
+      <div class="benefit-card">
+        <div class="benefit-icon-wrapper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+        </div>
+        <h3 class="benefit-title">Easy Shopping</h3>
+        <p class="benefit-desc">
+          Clean browsing, transparent rupee pricing, and an intuitive shopping cart make finding your next device effortless.
+        </p>
+      </div>
+
+      <div class="benefit-card">
+        <div class="benefit-icon-wrapper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </div>
+        <h3 class="benefit-title">Dedicated Support</h3>
+        <p class="benefit-desc">
+          Our friendly support team is always available to help answer questions, track orders, or assist with inquiries.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Products Section -->
+  <section class="featured-section">
+    <div class="section-header-row">
+      <div>
+        <span class="section-subtitle">Top Highlights</span>
+        <h2 class="section-title">Featured Products</h2>
+      </div>
+      <a routerLink="/products" class="btn btn-outline" id="view-all-products-link">
+        View All Products
+        <svg class="icon-arrow" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </a>
+    </div>
+
+    <div class="products-grid">
+      @for (product of featuredProducts; track product.id) {
+        <article class="product-card">
+          <div class="product-image-container">
+            @if (product.badge) {
+              <span class="product-badge">{{ product.badge }}</span>
+            }
+            <img
+              [src]="product.imageUrl"
+              [alt]="product.name"
+              class="product-image"
+              loading="lazy"
+              (error)="handleImageError($event)"
+            />
+          </div>
+
+          <div class="product-content">
+            <div class="product-header">
+              <span class="product-category">{{ product.category }}</span>
+              @if (product.rating) {
+                <span class="product-rating">★ {{ product.rating }}</span>
+              }
+            </div>
+
+            <h3 class="product-name">{{ product.name }}</h3>
+            <p class="product-desc">{{ product.description }}</p>
+
+            <div class="product-footer">
+              <div class="product-price">
+                <span class="currency-symbol">₹</span>{{ product.price.toLocaleString('en-IN') }}
+              </div>
+              <button
+                type="button"
+                class="btn btn-primary btn-sm add-cart-btn"
+                (click)="addToCart(product)"
+                [attr.aria-label]="'Add ' + product.name + ' to cart'"
+              >
+                <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                </svg>
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+
+  <!-- CTA Banner Section -->
+  <section class="cta-banner">
+    <div class="cta-inner">
+      <div class="cta-content">
+        <h2 class="cta-title">Ready to experience simple shopping?</h2>
+        <p class="cta-subtitle">Browse through our complete collection and get your items delivered promptly.</p>
+      </div>
+      <div class="cta-actions">
+        <a routerLink="/products" class="btn btn-primary btn-lg">Explore Catalogue</a>
+      </div>
+    </div>
+  </section>
+</div>

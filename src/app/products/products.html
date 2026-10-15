@@ -1,0 +1,156 @@
+<div class="products-page">
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="header-text">
+      <h1 class="page-title">Product Catalogue</h1>
+      <p class="page-subtitle">
+        Explore genuine laptops, smartphones, headphones, and computer accessories with official warranty and free delivery.
+      </p>
+    </div>
+  </header>
+
+  <!-- Filter & Search Toolbar -->
+  <section class="toolbar-section">
+    <div class="search-sort-bar">
+      <!-- Search Input -->
+      <div class="search-input-wrapper">
+        <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+        </svg>
+        <input
+          type="search"
+          id="product-search-input"
+          class="search-input"
+          placeholder="Search by name, category, or spec..."
+          [(ngModel)]="searchTerm"
+          aria-label="Search products"
+        />
+        @if (searchTerm) {
+          <button
+            type="button"
+            class="clear-search-btn"
+            (click)="searchTerm = ''"
+            aria-label="Clear search"
+          >
+            ✕
+          </button>
+        }
+      </div>
+
+      <!-- Sort Dropdown -->
+      <div class="sort-wrapper">
+        <label for="sort-select" class="sort-label">Sort by:</label>
+        <div class="select-container">
+          <select
+            id="sort-select"
+            class="sort-select"
+            [value]="sortBy"
+            (change)="setSort($event)"
+            aria-label="Sort products"
+          >
+            <option value="featured">Featured Picks</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="name-asc">Alphabetical: A - Z</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Pills -->
+    <div class="category-pills" role="tablist" aria-label="Product categories">
+      @for (cat of categories; track cat) {
+        <button
+          type="button"
+          class="pill-btn"
+          [class.active]="selectedCategory === cat"
+          (click)="setCategory(cat)"
+          role="tab"
+          [attr.aria-selected]="selectedCategory === cat"
+        >
+          {{ cat }}
+        </button>
+      }
+    </div>
+
+    <!-- Active Filter Info -->
+    <div class="filter-status-row">
+      <span class="results-count">
+        Showing <strong>{{ filteredProducts.length }}</strong> of {{ allProducts.length }} items
+      </span>
+      @if (searchTerm || selectedCategory !== 'All' || sortBy !== 'featured') {
+        <button type="button" class="reset-link" (click)="resetFilters()">
+          Clear all filters
+        </button>
+      }
+    </div>
+  </section>
+
+  <!-- Products Grid -->
+  @if (filteredProducts.length > 0) {
+    <div class="products-grid" id="products-catalogue-grid">
+      @for (product of filteredProducts; track product.id) {
+        <article class="product-card">
+          <div class="product-image-container">
+            @if (product.badge) {
+              <span class="product-badge">{{ product.badge }}</span>
+            }
+            <img
+              [src]="product.imageUrl"
+              [alt]="product.name"
+              class="product-image"
+              loading="lazy"
+              (error)="handleImageError($event)"
+            />
+          </div>
+
+          <div class="product-content">
+            <div class="product-header">
+              <span class="product-category">{{ product.category }}</span>
+              @if (product.rating) {
+                <span class="product-rating">★ {{ product.rating }} ({{ product.reviewsCount }})</span>
+              }
+            </div>
+
+            <h2 class="product-name">{{ product.name }}</h2>
+            <p class="product-desc">{{ product.description }}</p>
+
+            <div class="product-footer">
+              <div class="product-price">
+                <span class="currency-symbol">₹</span>{{ product.price.toLocaleString('en-IN') }}
+              </div>
+              <button
+                type="button"
+                class="btn btn-primary btn-sm add-cart-btn"
+                (click)="addToCart(product)"
+                [id]="'add-to-cart-btn-' + product.id"
+                [attr.aria-label]="'Add ' + product.name + ' to cart'"
+              >
+                <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                </svg>
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  } @else {
+    <!-- Empty State -->
+    <div class="empty-state">
+      <div class="empty-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        </svg>
+      </div>
+      <h3 class="empty-title">No products found</h3>
+      <p class="empty-desc">
+        We couldn't find any products matching your search criteria "{{ searchTerm }}". Try adjusting your search or clear your filters to browse everything.
+      </p>
+      <button type="button" class="btn btn-secondary" (click)="resetFilters()">
+        Reset All Filters
+      </button>
+    </div>
+  }
+</div>

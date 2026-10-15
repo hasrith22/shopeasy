@@ -1,0 +1,179 @@
+<div class="register-page">
+  <div class="register-card">
+    <div class="card-header">
+      <a routerLink="/products" class="back-link" id="back-to-shopping-link">
+        <svg viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+        </svg>
+        Back to Shopping
+      </a>
+
+      @if (!isSuccess) {
+        <h1 class="form-title">Create your ShopEasy account</h1>
+        <p class="form-subtitle">Join thousands of tech enthusiasts enjoying simple, guaranteed shopping.</p>
+      }
+    </div>
+
+    @if (!isSuccess) {
+      <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)" novalidate class="form-body">
+        <!-- Full Name -->
+        <div class="form-group">
+          <label for="fullName" class="form-label">
+            Full Name <span class="required">*</span>
+          </label>
+          <input
+            type="text"
+            id="fullName"
+            name="fullName"
+            class="form-control"
+            [class.is-invalid]="nameInput.invalid && (nameInput.dirty || nameInput.touched || registerForm.submitted)"
+            [(ngModel)]="user.fullName"
+            #nameInput="ngModel"
+            required
+            minlength="2"
+            placeholder="e.g. John Doe"
+            autocomplete="name"
+          />
+          @if (nameInput.invalid && (nameInput.dirty || nameInput.touched || registerForm.submitted)) {
+            <div class="error-feedback">
+              @if (nameInput.errors?.['required']) {
+                Full name is required.
+              } @else if (nameInput.errors?.['minlength']) {
+                Name must be at least 2 characters long.
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email" class="form-label">
+            Email Address <span class="required">*</span>
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-control"
+            [class.is-invalid]="emailInput.invalid && (emailInput.dirty || emailInput.touched || registerForm.submitted)"
+            [(ngModel)]="user.email"
+            #emailInput="ngModel"
+            required
+            email
+            placeholder="you@example.com"
+            autocomplete="email"
+          />
+          @if (emailInput.invalid && (emailInput.dirty || emailInput.touched || registerForm.submitted)) {
+            <div class="error-feedback">
+              @if (emailInput.errors?.['required']) {
+                Email address is required.
+              } @else if (emailInput.errors?.['email']) {
+                Please enter a valid email address.
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label for="password" class="form-label">
+            Password <span class="required">*</span>
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-control"
+            [class.is-invalid]="passInput.invalid && (passInput.dirty || passInput.touched || registerForm.submitted)"
+            [(ngModel)]="user.password"
+            #passInput="ngModel"
+            required
+            minlength="8"
+            placeholder="At least 8 characters"
+            autocomplete="new-password"
+          />
+          @if (passInput.invalid && (passInput.dirty || passInput.touched || registerForm.submitted)) {
+            <div class="error-feedback">
+              @if (passInput.errors?.['required']) {
+                Password is required.
+              } @else if (passInput.errors?.['minlength']) {
+                Password must contain at least 8 characters.
+              }
+            </div>
+          } @else {
+            <span class="field-hint">Must be at least 8 characters long.</span>
+          }
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label for="confirmPassword" class="form-label">
+            Confirm Password <span class="required">*</span>
+          </label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            class="form-control"
+            [class.is-invalid]="(confirmPassInput.invalid || passwordMismatch) && (confirmPassInput.dirty || confirmPassInput.touched || registerForm.submitted)"
+            [(ngModel)]="user.confirmPassword"
+            #confirmPassInput="ngModel"
+            required
+            placeholder="Re-enter your password"
+            autocomplete="new-password"
+          />
+          @if ((confirmPassInput.invalid || passwordMismatch) && (confirmPassInput.dirty || confirmPassInput.touched || registerForm.submitted)) {
+            <div class="error-feedback">
+              @if (confirmPassInput.errors?.['required']) {
+                Please confirm your password.
+              } @else if (passwordMismatch) {
+                Passwords do not match.
+              }
+            </div>
+          }
+        </div>
+
+        <div class="demo-notice">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>
+          <span>Frontend demo: passwords are validated client-side and never saved or transmitted.</span>
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn-primary btn-block"
+          id="submit-register-btn"
+          [disabled]="registerForm.invalid || passwordMismatch || isSubmitting"
+        >
+          @if (isSubmitting) {
+            Creating Account...
+          } @else {
+            Create Account
+          }
+        </button>
+      </form>
+    } @else {
+      <!-- Success State -->
+      <div class="success-box" id="registration-success-message">
+        <div class="success-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h2 class="success-title">Account Created Successfully!</h2>
+        <p class="success-desc">
+          Welcome to ShopEasy, <strong>{{ submittedUser.fullName }}</strong>. A demo confirmation has been recorded for <strong>{{ submittedUser.email }}</strong>.
+        </p>
+        <div class="success-actions">
+          <a routerLink="/products" class="btn btn-primary" id="success-start-shopping-btn">
+            Start Shopping Now
+          </a>
+          <button type="button" class="btn btn-secondary" (click)="registerAgain()">
+            Register Another
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>
