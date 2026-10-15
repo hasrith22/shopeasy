@@ -31,14 +31,6 @@
         >
           Products
         </a>
-        <a
-          routerLink="/orders"
-          routerLinkActive="active"
-          class="nav-link"
-          id="nav-orders-link"
-        >
-          My Orders
-        </a>
 
         @if (!authService.isLoggedIn()) {
           <a
@@ -58,6 +50,14 @@
             Register
           </a>
         } @else {
+          <a
+            routerLink="/orders"
+            routerLinkActive="active"
+            class="nav-link"
+            id="nav-orders-link"
+          >
+            My Orders
+          </a>
           <div class="user-chip">
             <span class="user-avatar-dot"></span>
             <span class="user-name">Hi, {{ authService.currentUser()?.fullName?.split(' ')?.[0] }}</span>
@@ -134,14 +134,6 @@
         >
           Products
         </a>
-        <a
-          routerLink="/orders"
-          routerLinkActive="active"
-          class="mobile-nav-link"
-          (click)="closeMobileMenu()"
-        >
-          My Orders
-        </a>
 
         @if (!authService.isLoggedIn()) {
           <a
@@ -161,6 +153,14 @@
             Register
           </a>
         } @else {
+          <a
+            routerLink="/orders"
+            routerLinkActive="active"
+            class="mobile-nav-link"
+            (click)="closeMobileMenu()"
+          >
+            My Orders
+          </a>
           <div class="mobile-user-row">
             <span class="user-avatar-dot"></span>
             <span>Signed in as <strong>{{ authService.currentUser()?.fullName }}</strong></span>
@@ -381,7 +381,9 @@
           <ul class="footer-links">
             <li><a routerLink="/">Home</a></li>
             <li><a routerLink="/products">All Products</a></li>
-            <li><a routerLink="/orders">My Orders</a></li>
+            @if (authService.isLoggedIn()) {
+              <li><a routerLink="/orders">My Orders</a></li>
+            }
             <li><a routerLink="/login">Sign In</a></li>
             <li><a routerLink="/register">Register Account</a></li>
           </ul>

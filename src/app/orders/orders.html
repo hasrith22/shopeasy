@@ -3,17 +3,37 @@
     <div class="header-text-group">
       <h1 class="page-title">My Orders</h1>
       <p class="page-subtitle">
-        Track your booked orders, delivery status, shipping addresses, and order history.
+        @if (authService.isLoggedIn()) {
+          Track booked orders for <strong>{{ authService.currentUser()?.fullName }}</strong> ({{ authService.currentUser()?.email }}).
+        } @else {
+          Please sign in to view your account order history.
+        }
       </p>
     </div>
-    @if (orders.length > 0) {
+    @if (authService.isLoggedIn() && orders.length > 0) {
       <button type="button" class="btn btn-outline btn-sm" (click)="clearAllOrders()">
         Clear History
       </button>
     }
   </header>
 
-  @if (orders.length === 0) {
+  @if (!authService.isLoggedIn()) {
+    <!-- Not Logged In State -->
+    <div class="empty-orders-view">
+      <div class="empty-icon-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+      </div>
+      <h2 class="empty-title">Please Sign In</h2>
+      <p class="empty-desc">
+        You must be signed in to view your orders. Sign in to your ShopEasy account to see your booked orders and delivery tracking.
+      </p>
+      <a routerLink="/login" class="btn btn-primary btn-lg" id="orders-login-btn">
+        Sign In to Your Account
+      </a>
+    </div>
+  } @else if (orders.length === 0) {
     <!-- Empty Orders State -->
     <div class="empty-orders-view">
       <div class="empty-icon-box">
@@ -23,7 +43,7 @@
       </div>
       <h2 class="empty-title">No orders placed yet</h2>
       <p class="empty-desc">
-        You haven't booked any electronics yet. Browse our catalogue of laptops, smartphones, and accessories!
+        You haven't booked any electronics on this account ({{ authService.currentUser()?.email }}) yet. Browse our catalogue of laptops, smartphones, and accessories!
       </p>
       <a routerLink="/products" class="btn btn-primary btn-lg" id="orders-browse-btn">
         Start Shopping

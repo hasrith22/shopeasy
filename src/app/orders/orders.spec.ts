@@ -3,14 +3,17 @@ import { provideRouter } from '@angular/router';
 import { OrdersComponent } from './orders';
 import { OrderService, Order } from '../order.service';
 import { CartService } from '../cart.service';
+import { AuthService } from '../auth.service';
 
 describe('OrdersComponent', () => {
   let orderService: OrderService;
   let cartService: CartService;
+  let authService: AuthService;
 
   const sampleOrder: Order = {
     orderId: 'SE-123456',
     orderDate: new Date().toISOString(),
+    userEmail: 'hasrith@example.com',
     items: [
       {
         product: {
@@ -48,8 +51,10 @@ describe('OrdersComponent', () => {
 
     orderService = TestBed.inject(OrderService);
     cartService = TestBed.inject(CartService);
+    authService = TestBed.inject(AuthService);
     orderService.clearOrders();
     cartService.clearCart();
+    authService.logout();
   });
 
   it('should create the orders component', () => {
@@ -58,15 +63,34 @@ describe('OrdersComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should list existing orders', () => {
+  it('should return empty orders when user is not logged in', () => {
     orderService.addOrder(sampleOrder);
     const fixture = TestBed.createComponent(OrdersComponent);
     const component = fixture.componentInstance;
+    expect(component.orders.length).toBe(0);
+  });
+
+  it('should list existing orders for the logged-in customer account only', () => {
+    // Log in as hasrith
+    authService.register('Hasrith Rao', 'hasrith@example.com', 'Password@123');
+    orderService.addOrder(sampleOrder);
+
+    // Also add another order for someone else
+    orderService.addOrder({
+      ...sampleOrder,
+      orderId: 'SE-777777',
+      userEmail: 'stranger@example.com',
+    });
+
+    const fixture = TestBed.createComponent(OrdersComponent);
+    const component = fixture.componentInstance;
+    // Should only see hasrith's order, NOT stranger's order
     expect(component.orders.length).toBe(1);
     expect(component.orders[0].orderId).toBe('SE-123456');
   });
 
   it('should support Buy Again to re-add order items to cart', () => {
+    authService.register('Hasrith Rao', 'hasrith@example.com', 'Password@123');
     orderService.addOrder(sampleOrder);
     const fixture = TestBed.createComponent(OrdersComponent);
     const component = fixture.componentInstance;

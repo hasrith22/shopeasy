@@ -120,6 +120,7 @@ export class CheckoutComponent {
       const savedOrderRecord: Order = {
         orderId: snapshot.orderId,
         orderDate: snapshot.orderDate.toISOString(),
+        userEmail: this.authService.currentUser()?.email || 'demo@shopeasy.com',
         items: snapshot.items,
         subtotal: snapshot.subtotal,
         shipping: snapshot.shipping,

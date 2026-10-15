@@ -3,6 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { OrderService, Order } from '../order.service';
 import { CartService } from '../cart.service';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-orders',
@@ -14,9 +15,10 @@ import { CartService } from '../cart.service';
 export class OrdersComponent {
   readonly orderService = inject(OrderService);
   readonly cartService = inject(CartService);
+  readonly authService = inject(AuthService);
 
   get orders(): Order[] {
-    return this.orderService.orders();
+    return this.orderService.currentUserOrders();
   }
 
   buyAgain(order: Order): void {
@@ -28,7 +30,7 @@ export class OrdersComponent {
   }
 
   clearAllOrders(): void {
-    this.orderService.clearOrders();
-    this.cartService.showToast('Orders history cleared');
+    this.orderService.clearOrdersForCurrentUser();
+    this.cartService.showToast('Your order history has been cleared');
   }
 }

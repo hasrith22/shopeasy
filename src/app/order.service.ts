@@ -1,6 +1,7 @@
-import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, signal, computed, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { CartItem } from './cart.service';
+import { AuthService } from './auth.service';
 
 export interface ShippingAddress {
   fullName: string;
@@ -13,7 +14,8 @@ export interface ShippingAddress {
 
 export interface Order {
   orderId: string;
-  orderDate: string; // ISO string for safe JSON serialization
+  orderDate: string; // ISO string
+  userEmail: string; // Associated customer account
   items: CartItem[];
   subtotal: number;
   shipping: number;
@@ -29,9 +31,20 @@ export interface Order {
 })
 export class OrderService {
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly STORAGE_KEY = 'shopeasy_orders_v1';
+  private readonly authService = inject(AuthService);
+  private readonly STORAGE_KEY = 'shopeasy_customer_orders_v2';
 
+  // All placed orders stored in client state
   readonly orders = signal<Order[]>([]);
+
+  // Only the orders belonging to the currently logged in customer account
+  readonly currentUserOrders = computed(() => {
+    const user = this.authService.currentUser();
+    if (!user) return [];
+    return this.orders().filter(
+      (o) => o.userEmail.toLowerCase() === user.email.toLowerCase()
+    );
+  });
 
   constructor() {
     this.initStorage();
@@ -43,52 +56,15 @@ export class OrderService {
       const stored = localStorage.getItem(this.STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           this.orders.set(parsed);
           return;
         }
       }
-      // Seed with an initial sample order so the user sees a complete history right away
-      const initialSampleOrder: Order = {
-        orderId: 'SE-892401',
-        orderDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-        items: [
-          {
-            product: {
-              id: 3,
-              name: 'Wireless Noise-Canceling Headphones',
-              price: 4999,
-              category: 'Audio',
-              description: 'Active noise cancellation, plush earcups, 40hr playback.',
-              imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80',
-            },
-            quantity: 1,
-          },
-        ],
-        subtotal: 4999,
-        shipping: 0,
-        total: 4999,
-        shippingAddress: {
-          fullName: 'Demo Shopper',
-          phone: '9876543210',
-          street: 'Flat 402, Skyline Residency, MG Road',
-          city: 'Mumbai',
-          state: 'Maharashtra',
-          pincode: '400001',
-        },
-        paymentMethod: 'UPI / QR Payment',
-        status: 'Shipped',
-        estimatedDelivery: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', {
-          weekday: 'short',
-          month: 'short',
-          day: 'numeric',
-        }),
-      };
-
-      this.orders.set([initialSampleOrder]);
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify([initialSampleOrder]));
+      // No mock/fake orders - clean real orders only
+      this.orders.set([]);
     } catch {
-      // Safe fallback
+      this.orders.set([]);
     }
   }
 
@@ -97,8 +73,8 @@ export class OrderService {
     this.saveToStorage();
   }
 
-  getOrders(): Order[] {
-    return this.orders();
+  getOrdersForCurrentUser(): Order[] {
+    return this.currentUserOrders();
   }
 
   getOrderById(id: string): Order | undefined {
@@ -114,6 +90,15 @@ export class OrderService {
         // Safe fallback
       }
     }
+  }
+
+  clearOrdersForCurrentUser(): void {
+    const user = this.authService.currentUser();
+    if (!user) return;
+    this.orders.update((prev) =>
+      prev.filter((o) => o.userEmail.toLowerCase() !== user.email.toLowerCase())
+    );
+    this.saveToStorage();
   }
 
   private saveToStorage(): void {
