@@ -33,8 +33,9 @@ describe('RegisterComponent', () => {
     const fixture = TestBed.createComponent(RegisterComponent);
     const component = fixture.componentInstance;
 
+    const email = `jane_${Date.now()}@example.com`;
     component.user.fullName = 'Jane Doe';
-    component.user.email = 'jane@example.com';
+    component.user.email = email;
     component.user.password = 'password123';
     component.user.confirmPassword = 'password123';
 
@@ -49,6 +50,6 @@ describe('RegisterComponent', () => {
     await new Promise((resolve) => setTimeout(resolve, 550));
     expect(component.isSuccess).toBe(true);
     expect(component.submittedUser.fullName).toBe('Jane Doe');
-    expect(component.submittedUser.email).toBe('jane@example.com');
+    expect(component.submittedUser.email).toBe(email);
   });
 });

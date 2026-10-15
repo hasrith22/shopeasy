@@ -10,11 +10,23 @@
 
       @if (!isSuccess) {
         <h1 class="form-title">Create your ShopEasy account</h1>
-        <p class="form-subtitle">Join thousands of tech enthusiasts enjoying simple, guaranteed shopping.</p>
+        <p class="form-subtitle">
+          Join thousands of tech enthusiasts enjoying simple, guaranteed shopping. Already have an account?
+          <a routerLink="/login" class="inline-link" id="register-login-link">Sign in here</a>.
+        </p>
       }
     </div>
 
     @if (!isSuccess) {
+      @if (errorMessage) {
+        <div class="alert-box alert-danger" role="alert">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+          </svg>
+          <span>{{ errorMessage }}</span>
+        </div>
+      }
+
       <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)" novalidate class="form-body">
         <!-- Full Name -->
         <div class="form-group">
@@ -137,14 +149,14 @@
           <svg viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
           </svg>
-          <span>Frontend demo: passwords are validated client-side and never saved or transmitted.</span>
+          <span>All registered accounts are safely stored in your browser session and ready for sign-in.</span>
         </div>
 
         <button
           type="submit"
           class="btn btn-primary btn-block"
           id="submit-register-btn"
-          [disabled]="registerForm.invalid || passwordMismatch || isSubmitting"
+          [disabled]="isSubmitting || !user.fullName || !user.email || !user.password || user.password.length < 8 || passwordMismatch"
         >
           @if (isSubmitting) {
             Creating Account...
@@ -161,9 +173,9 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 class="success-title">Account Created Successfully!</h2>
+        <h2 class="success-title">Account Created &amp; Logged In!</h2>
         <p class="success-desc">
-          Welcome to ShopEasy, <strong>{{ submittedUser.fullName }}</strong>. A demo confirmation has been recorded for <strong>{{ submittedUser.email }}</strong>.
+          Welcome to ShopEasy, <strong>{{ submittedUser.fullName }}</strong>. You are now logged in with <strong>{{ submittedUser.email }}</strong>.
         </p>
         <div class="success-actions">
           <a routerLink="/products" class="btn btn-primary" id="success-start-shopping-btn">

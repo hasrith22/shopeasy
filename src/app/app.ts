@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CartService } from './cart.service';
+import { AuthService } from './auth.service';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,7 @@ import { CartService } from './cart.service';
 })
 export class App {
   readonly cartService = inject(CartService);
+  readonly authService = inject(AuthService);
 
   readonly isMobileMenuOpen = signal(false);
   readonly showCheckoutNotice = signal(false);
@@ -30,5 +32,12 @@ export class App {
 
   closeCheckoutNotice(): void {
     this.showCheckoutNotice.set(false);
+  }
+
+  logout(): void {
+    const user = this.authService.currentUser();
+    this.authService.logout();
+    this.closeMobileMenu();
+    this.cartService.showToast(user ? `Signed out ${user.fullName}` : 'Signed out successfully');
   }
 }

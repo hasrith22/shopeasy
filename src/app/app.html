@@ -31,14 +31,39 @@
         >
           Products
         </a>
-        <a
-          routerLink="/register"
-          routerLinkActive="active"
-          class="nav-link"
-          id="nav-register-link"
-        >
-          Register
-        </a>
+
+        @if (!authService.isLoggedIn()) {
+          <a
+            routerLink="/login"
+            routerLinkActive="active"
+            class="nav-link"
+            id="nav-login-link"
+          >
+            Sign In
+          </a>
+          <a
+            routerLink="/register"
+            routerLinkActive="active"
+            class="nav-link"
+            id="nav-register-link"
+          >
+            Register
+          </a>
+        } @else {
+          <div class="user-chip">
+            <span class="user-avatar-dot"></span>
+            <span class="user-name">Hi, {{ authService.currentUser()?.fullName?.split(' ')?.[0] }}</span>
+          </div>
+          <button
+            type="button"
+            class="nav-btn-logout"
+            (click)="logout()"
+            id="nav-logout-btn"
+            title="Sign out"
+          >
+            Sign Out
+          </button>
+        }
       </nav>
 
       <!-- Right Header Actions (Cart + Mobile Toggle) -->
@@ -101,14 +126,37 @@
         >
           Products
         </a>
-        <a
-          routerLink="/register"
-          routerLinkActive="active"
-          class="mobile-nav-link"
-          (click)="closeMobileMenu()"
-        >
-          Register
-        </a>
+
+        @if (!authService.isLoggedIn()) {
+          <a
+            routerLink="/login"
+            routerLinkActive="active"
+            class="mobile-nav-link"
+            (click)="closeMobileMenu()"
+          >
+            Sign In
+          </a>
+          <a
+            routerLink="/register"
+            routerLinkActive="active"
+            class="mobile-nav-link"
+            (click)="closeMobileMenu()"
+          >
+            Register
+          </a>
+        } @else {
+          <div class="mobile-user-row">
+            <span class="user-avatar-dot"></span>
+            <span>Signed in as <strong>{{ authService.currentUser()?.fullName }}</strong></span>
+          </div>
+          <button
+            type="button"
+            class="mobile-nav-link mobile-logout-link"
+            (click)="logout()"
+          >
+            Sign Out
+          </button>
+        }
       </nav>
     }
   </header>
@@ -317,6 +365,7 @@
           <ul class="footer-links">
             <li><a routerLink="/">Home</a></li>
             <li><a routerLink="/products">All Products</a></li>
+            <li><a routerLink="/login">Sign In</a></li>
             <li><a routerLink="/register">Register Account</a></li>
           </ul>
         </div>
@@ -324,9 +373,9 @@
         <div class="footer-links-col">
           <h4 class="footer-heading">Categories</h4>
           <ul class="footer-links">
-            <li><a routerLink="/products">Laptops & Notebooks</a></li>
-            <li><a routerLink="/products">Smartphones & 5G</a></li>
-            <li><a routerLink="/products">Audio & Headphones</a></li>
+            <li><a routerLink="/products">Laptops &amp; Notebooks</a></li>
+            <li><a routerLink="/products">Smartphones &amp; 5G</a></li>
+            <li><a routerLink="/products">Audio &amp; Headphones</a></li>
           </ul>
         </div>
 
@@ -340,7 +389,7 @@
 
       <div class="footer-bottom">
         <p class="footer-copyright">
-          © 2026 ShopEasy Inc. All rights reserved. Clean Angular Architecture.
+          &copy; 2026 ShopEasy Inc. All rights reserved. Clean Angular Architecture.
         </p>
       </div>
     </div>

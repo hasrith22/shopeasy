@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
+import { AuthService } from '../auth.service';
+import { CartService } from '../cart.service';
 
 @Component({
   selector: 'app-register',
@@ -11,6 +13,10 @@ import { RouterLink } from '@angular/router';
   styleUrl: './register.css',
 })
 export class RegisterComponent {
+  private readonly authService = inject(AuthService);
+  private readonly cartService = inject(CartService);
+  private readonly router = inject(Router);
+
   user = {
     fullName: '',
     email: '',
@@ -20,6 +26,7 @@ export class RegisterComponent {
 
   isSubmitting = false;
   isSuccess = false;
+  errorMessage: string | null = null;
   submittedUser = {
     fullName: '',
     email: '',
@@ -34,26 +41,41 @@ export class RegisterComponent {
   }
 
   onSubmit(form: NgForm): void {
+    this.errorMessage = null;
+
     if (form.invalid || this.passwordMismatch) {
       return;
     }
 
     this.isSubmitting = true;
 
-    // Simulate instant secure client-side demo validation
     setTimeout(() => {
+      const result = this.authService.register(
+        this.user.fullName,
+        this.user.email,
+        this.user.password
+      );
+
+      this.isSubmitting = false;
+
+      if (!result.success) {
+        this.errorMessage = result.message || 'Registration failed.';
+        return;
+      }
+
       this.submittedUser = {
         fullName: this.user.fullName,
         email: this.user.email,
       };
       this.isSuccess = true;
-      this.isSubmitting = false;
+      this.cartService.showToast(`Welcome to ShopEasy, ${this.user.fullName}!`);
       form.resetForm();
     }, 450);
   }
 
   registerAgain(): void {
     this.isSuccess = false;
+    this.errorMessage = null;
     this.user = {
       fullName: '',
       email: '',
