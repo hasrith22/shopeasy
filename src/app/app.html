@@ -289,14 +289,14 @@
               <span class="total-value">₹{{ cartService.total().toLocaleString('en-IN') }}</span>
             </div>
 
-            <button
-              type="button"
+            <a
+              routerLink="/checkout"
               class="btn btn-primary btn-block"
               id="checkout-btn"
-              (click)="openCheckoutNotice()"
+              (click)="cartService.closeCart()"
             >
               Proceed to Checkout
-            </button>
+            </a>
 
             <button
               type="button"

@@ -1,0 +1,431 @@
+<div class="checkout-page">
+  <!-- Step Indicator -->
+  <div class="steps-progress-bar">
+    <div class="step-item" [class.active]="currentStep() === 1" [class.completed]="currentStep() > 1">
+      <div class="step-badge">1</div>
+      <span class="step-label">Delivery Address</span>
+    </div>
+    <div class="step-connector" [class.filled]="currentStep() > 1"></div>
+    <div class="step-item" [class.active]="currentStep() === 2" [class.completed]="currentStep() > 2">
+      <div class="step-badge">2</div>
+      <span class="step-label">Payment</span>
+    </div>
+    <div class="step-connector" [class.filled]="currentStep() > 2"></div>
+    <div class="step-item" [class.active]="currentStep() === 3">
+      <div class="step-badge">3</div>
+      <span class="step-label">Order Confirmed</span>
+    </div>
+  </div>
+
+  <!-- If Cart is Empty and not in Step 3 -->
+  @if (cartService.cartItems().length === 0 && currentStep() !== 3) {
+    <div class="empty-checkout-card">
+      <div class="empty-checkout-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+      </div>
+      <h2>Your cart is currently empty</h2>
+      <p>Add your favourite electronics from our catalogue to proceed with checkout.</p>
+      <a routerLink="/products" class="btn btn-primary" id="checkout-browse-products">
+        Browse Catalogue
+      </a>
+    </div>
+  }
+
+  <!-- Main Checkout Grid for Steps 1 & 2 -->
+  @if (cartService.cartItems().length > 0 && currentStep() !== 3) {
+    <div class="checkout-grid">
+      <!-- Left Column: Step Content -->
+      <div class="checkout-main-col">
+        <!-- STEP 1: DELIVERY ADDRESS -->
+        @if (currentStep() === 1) {
+          <section class="checkout-card" id="address-section">
+            <div class="card-header-bar">
+              <h2 class="card-title">1. Shipping &amp; Delivery Address</h2>
+              <span class="step-sub">Enter where you'd like your order delivered</span>
+            </div>
+
+            <form #addressForm="ngForm" (ngSubmit)="proceedToPayment(addressForm)" class="address-form" novalidate>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="shipName" class="form-label">Full Name <span class="required">*</span></label>
+                  <input
+                    type="text"
+                    id="shipName"
+                    name="fullName"
+                    class="form-control"
+                    [(ngModel)]="address.fullName"
+                    #nameField="ngModel"
+                    required
+                    minlength="2"
+                    placeholder="e.g. John Doe"
+                    autocomplete="name"
+                  />
+                  @if (nameField.invalid && (nameField.dirty || nameField.touched || addressForm.submitted)) {
+                    <span class="error-msg">Full name is required.</span>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label for="shipPhone" class="form-label">Mobile Number <span class="required">*</span></label>
+                  <input
+                    type="tel"
+                    id="shipPhone"
+                    name="phone"
+                    class="form-control"
+                    [(ngModel)]="address.phone"
+                    #phoneField="ngModel"
+                    required
+                    pattern="[0-9]{10}"
+                    placeholder="10-digit mobile number"
+                    autocomplete="tel"
+                  />
+                  @if (phoneField.invalid && (phoneField.dirty || phoneField.touched || addressForm.submitted)) {
+                    <span class="error-msg">Enter a valid 10-digit mobile number.</span>
+                  }
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="shipStreet" class="form-label">Street Address / House No. / Building <span class="required">*</span></label>
+                <input
+                  type="text"
+                  id="shipStreet"
+                  name="street"
+                  class="form-control"
+                  [(ngModel)]="address.street"
+                  #streetField="ngModel"
+                  required
+                  placeholder="e.g. Flat 402, Skyline Residency, MG Road"
+                  autocomplete="street-address"
+                />
+                @if (streetField.invalid && (streetField.dirty || streetField.touched || addressForm.submitted)) {
+                  <span class="error-msg">Street address is required.</span>
+                }
+              </div>
+
+              <div class="form-row-3">
+                <div class="form-group">
+                  <label for="shipCity" class="form-label">City <span class="required">*</span></label>
+                  <input
+                    type="text"
+                    id="shipCity"
+                    name="city"
+                    class="form-control"
+                    [(ngModel)]="address.city"
+                    #cityField="ngModel"
+                    required
+                    placeholder="e.g. Mumbai"
+                    autocomplete="address-level2"
+                  />
+                  @if (cityField.invalid && (cityField.dirty || cityField.touched || addressForm.submitted)) {
+                    <span class="error-msg">City is required.</span>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label for="shipState" class="form-label">State <span class="required">*</span></label>
+                  <select
+                    id="shipState"
+                    name="state"
+                    class="form-control"
+                    [(ngModel)]="address.state"
+                    required
+                  >
+                    @for (st of indianStates; track st) {
+                      <option [value]="st">{{ st }}</option>
+                    }
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="shipPin" class="form-label">PIN Code <span class="required">*</span></label>
+                  <input
+                    type="text"
+                    id="shipPin"
+                    name="pincode"
+                    class="form-control"
+                    [(ngModel)]="address.pincode"
+                    #pinField="ngModel"
+                    required
+                    pattern="[0-9]{6}"
+                    placeholder="6 digits (e.g. 400001)"
+                    autocomplete="postal-code"
+                  />
+                  @if (pinField.invalid && (pinField.dirty || pinField.touched || addressForm.submitted)) {
+                    <span class="error-msg">Enter a 6-digit PIN code.</span>
+                  }
+                </div>
+              </div>
+
+              <div class="form-actions-row">
+                <a routerLink="/products" class="btn btn-secondary">
+                  Continue Shopping
+                </a>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="proceed-to-payment-btn"
+                  [disabled]="addressForm.invalid"
+                >
+                  Proceed to Payment
+                  <svg class="icon-arrow" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            </form>
+          </section>
+        }
+
+        <!-- STEP 2: PAYMENT METHOD -->
+        @if (currentStep() === 2) {
+          <section class="checkout-card" id="payment-section">
+            <div class="card-header-bar">
+              <h2 class="card-title">2. Select Payment Method</h2>
+              <span class="step-sub">Choose your preferred payment method for demo order processing</span>
+            </div>
+
+            <!-- Address Recap Pill -->
+            <div class="recap-pill">
+              <div class="recap-text">
+                <strong>Delivering to:</strong>
+                <span>{{ address.fullName }}, {{ address.street }}, {{ address.city }}, {{ address.state }} - {{ address.pincode }} (Ph: {{ address.phone }})</span>
+              </div>
+              <button type="button" class="btn-link" (click)="backToAddress()">Change</button>
+            </div>
+
+            <!-- Payment Options -->
+            <div class="payment-options-list">
+              <!-- UPI Option -->
+              <label class="payment-card" [class.selected]="paymentMethod === 'upi'">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="upi"
+                  [(ngModel)]="paymentMethod"
+                />
+                <div class="payment-content">
+                  <div class="payment-title-row">
+                    <span class="payment-name">UPI / QR Code</span>
+                    <span class="payment-badge-rec">Instant</span>
+                  </div>
+                  <p class="payment-desc">Pay using Google Pay, PhonePe, Paytm, BHIM or any UPI App.</p>
+                  @if (paymentMethod === 'upi') {
+                    <div class="payment-details-box">
+                      <label for="upiField" class="sub-label">UPI ID / VPA</label>
+                      <input
+                        type="text"
+                        id="upiField"
+                        class="form-control"
+                        [(ngModel)]="upiId"
+                        placeholder="yourname@okhdfcbank"
+                      />
+                    </div>
+                  }
+                </div>
+              </label>
+
+              <!-- Card Option -->
+              <label class="payment-card" [class.selected]="paymentMethod === 'card'">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="card"
+                  [(ngModel)]="paymentMethod"
+                />
+                <div class="payment-content">
+                  <div class="payment-title-row">
+                    <span class="payment-name">Credit / Debit Card</span>
+                    <span class="payment-badge">All Major Cards</span>
+                  </div>
+                  <p class="payment-desc">Visa, MasterCard, RuPay, and American Express accepted.</p>
+                  @if (paymentMethod === 'card') {
+                    <div class="payment-details-box">
+                      <label for="cardField" class="sub-label">Card Number</label>
+                      <input
+                        type="text"
+                        id="cardField"
+                        class="form-control"
+                        [(ngModel)]="cardNumber"
+                        placeholder="•••• •••• •••• ••••"
+                      />
+                    </div>
+                  }
+                </div>
+              </label>
+
+              <!-- Cash On Delivery Option -->
+              <label class="payment-card" [class.selected]="paymentMethod === 'cod'">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="cod"
+                  [(ngModel)]="paymentMethod"
+                />
+                <div class="payment-content">
+                  <div class="payment-title-row">
+                    <span class="payment-name">Cash on Delivery (COD)</span>
+                    <span class="payment-badge">Pay at Doorstep</span>
+                  </div>
+                  <p class="payment-desc">Pay cash or UPI upon delivery to your doorstep.</p>
+                </div>
+              </label>
+            </div>
+
+            <!-- Demo Mode Security Notice -->
+            <div class="demo-shield-notice">
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              <span>Demo Checkout Mode: No actual payment will be charged. Clicking below finalizes and places your order.</span>
+            </div>
+
+            <div class="form-actions-row">
+              <button type="button" class="btn btn-secondary" (click)="backToAddress()">
+                ← Back to Address
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="place-order-btn"
+                (click)="completeOrder()"
+                [disabled]="isProcessingPayment()"
+              >
+                @if (isProcessingPayment()) {
+                  Processing Order...
+                } @else {
+                  Place Order (₹{{ cartService.total().toLocaleString('en-IN') }})
+                }
+              </button>
+            </div>
+          </section>
+        }
+      </div>
+
+      <!-- Right Column: Order Summary Sidebar -->
+      <aside class="checkout-sidebar">
+        <div class="sidebar-card">
+          <h3 class="sidebar-title">Order Summary ({{ cartService.totalItems() }} items)</h3>
+
+          <ul class="order-items-preview">
+            @for (item of cartService.cartItems(); track item.product.id) {
+              <li class="preview-item">
+                <img [src]="item.product.imageUrl" [alt]="item.product.name" class="preview-img" />
+                <div class="preview-info">
+                  <span class="preview-name">{{ item.product.name }}</span>
+                  <span class="preview-qty">Qty: {{ item.quantity }} × ₹{{ item.product.price.toLocaleString('en-IN') }}</span>
+                </div>
+                <span class="preview-price">₹{{ (item.product.price * item.quantity).toLocaleString('en-IN') }}</span>
+              </li>
+            }
+          </ul>
+
+          <div class="summary-breakdown">
+            <div class="breakdown-row">
+              <span>Items Subtotal</span>
+              <span>₹{{ cartService.subtotal().toLocaleString('en-IN') }}</span>
+            </div>
+            <div class="breakdown-row">
+              <span>Standard Delivery</span>
+              <span>
+                @if (cartService.shipping() === 0) {
+                  <span class="text-free">FREE</span>
+                } @else {
+                  ₹{{ cartService.shipping() }}
+                }
+              </span>
+            </div>
+            <div class="breakdown-row grand-total">
+              <strong>Order Total</strong>
+              <strong class="total-amount">₹{{ cartService.total().toLocaleString('en-IN') }}</strong>
+            </div>
+          </div>
+
+          <div class="sidebar-perks">
+            <div class="perk-item">
+              <span>🛡️</span> 2-Year Official Brand Warranty
+            </div>
+            <div class="perk-item">
+              <span>⚡</span> Estimated Delivery: <strong>{{ estimatedDeliveryDate }}</strong>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  }
+
+  <!-- STEP 3: ORDER PLACED SUCCESS CONFIRMATION -->
+  @if (currentStep() === 3 && placedOrder()) {
+    <div class="order-success-card" id="order-confirmed-view">
+      <div class="success-celebration-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+
+      <span class="success-kicker">Order Placed Successfully!</span>
+      <h1 class="order-id-headline">Order #{{ placedOrder()?.orderId }}</h1>
+      <p class="order-subtext">
+        Thank you for shopping with ShopEasy! Your order has been confirmed and scheduled for dispatch.
+      </p>
+
+      <!-- Order Details Grid -->
+      <div class="order-details-grid">
+        <div class="detail-box">
+          <span class="detail-label">Estimated Delivery</span>
+          <strong class="detail-val text-accent">{{ estimatedDeliveryDate }}</strong>
+          <small class="detail-sub">Dispatched via Express Courier</small>
+        </div>
+
+        <div class="detail-box">
+          <span class="detail-label">Payment Method</span>
+          <strong class="detail-val">{{ placedOrder()?.paymentMethod }}</strong>
+          <small class="detail-sub">Status: Demo Payment Confirmed</small>
+        </div>
+
+        <div class="detail-box">
+          <span class="detail-label">Total Amount</span>
+          <strong class="detail-val">₹{{ placedOrder()?.total?.toLocaleString('en-IN') }}</strong>
+          <small class="detail-sub">All taxes included</small>
+        </div>
+
+        <div class="detail-box">
+          <span class="detail-label">Shipping Address</span>
+          <strong class="detail-val">{{ placedOrder()?.shippingAddress?.fullName }}</strong>
+          <small class="detail-sub">
+            {{ placedOrder()?.shippingAddress?.street }}, {{ placedOrder()?.shippingAddress?.city }},
+            {{ placedOrder()?.shippingAddress?.state }} - {{ placedOrder()?.shippingAddress?.pincode }}
+          </small>
+        </div>
+      </div>
+
+      <!-- Items Ordered Recap -->
+      <div class="ordered-items-summary">
+        <h3 class="ordered-heading">Items in this Order</h3>
+        <div class="ordered-items-list">
+          @for (item of placedOrder()?.items; track item.product.id) {
+            <div class="ordered-item-row">
+              <img [src]="item.product.imageUrl" [alt]="item.product.name" class="ordered-img" />
+              <div class="ordered-meta">
+                <span class="ordered-title">{{ item.product.name }}</span>
+                <span class="ordered-cat">{{ item.product.category }} · Qty: {{ item.quantity }}</span>
+              </div>
+              <span class="ordered-price">₹{{ (item.product.price * item.quantity).toLocaleString('en-IN') }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="success-card-actions">
+        <a routerLink="/products" class="btn btn-primary btn-lg" id="continue-shopping-btn">
+          Continue Shopping
+        </a>
+        <a routerLink="/" class="btn btn-secondary btn-lg">
+          Back to Home
+        </a>
+      </div>
+    </div>
+  }
+</div>
